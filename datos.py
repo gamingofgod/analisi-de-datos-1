@@ -74,8 +74,12 @@ def plotframe(datacsvframe,column):
     
 def framehist(datacsvframe,column):
     figura = plot.hist(datacsvframe[column])
+    ubicacion='datos/templates/grafica.png'
+    plot.savefig(ubicacion)
+    ubicacion='grafica.png'
     plot.show()
-    return figura
+
+    return ubicacion
     
 def repeating(column):
     for i in range(0,len(column)-1):
@@ -119,16 +123,8 @@ def visualize():
     if(len(variableentrada)==1 and variablesalida == "no"):
         if(atipicos=="activado"):
             fig=framehist(deleting(variableentrada[0],todelete(variableentrada[0],quantiles(variableentrada[0]))),variableentrada[0])
-            ax=fig.subplots()
-            ax.plot([1,2])
-            buf = io.BytesIO()
-            fig.savefig(buf, format="png")
-            data = base64.b64encode(buf.getbuffer()).decode("ascii")
-            print(data)
-            return render_template('index.html',data=data)
             
-    return Response(img.getvalue(),mimetype='image/png')
-    #render_template('index.html',data=tamañoentrenamiento)
+    return render_template('mostrar.html',data=fig)
 
 
 
