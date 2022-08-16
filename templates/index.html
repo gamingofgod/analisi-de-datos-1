@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        :root {}
+
+        body {
+            margin: 0;
+        }
+
+        .contenedor {
+            display: flex;
+            height: 100vh;
+        }
+
+        .item {
+            background-color: aquamarine;
+            width: 40%;
+        }
+
+        .colordiferente {
+            background-color: bisque;
+        }
+
+        .item2 {
+            background-color: red;
+            width: 20%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="contenedor">
+        <div class="item colordiferente">
+            <form action="/visualize" method="post">
+                <div class="label">
+                    <div class="subitems">
+                        <p>Atipicos</p>
+                        <label for="">Activado</label>
+                        <input type="radio" name="correcion" value="activado" required >
+                        <label for="">Desactivado</label>
+                        <input type="radio" name="correcion" value="desactivado" required>
+                    </div>
+                    <div class="subitems">
+                        <label for="">Factor Alfa</label>
+                        <input type="range" min="1,5" max="3" value="" name="factoralfa" id="FactorAlfa">
+                    </div>
+                    <div class="subitems">
+                        <p>varaibles de entrada</p>
+                        <label for="">length</label>
+                        <input type="checkbox" name="variable" value="length">
+                        <label for="">diameter</label>
+                        <input type="checkbox" name="variable" value="diameter">
+                        <label for="">height</label>
+                        <input type="checkbox" name="variable" value="height">
+                        <label for="">whole weight</label>
+                        <input type="checkbox" name="variable" value="whole weight">
+                        <label for="">shucked weight</label>
+                        <input type="checkbox" name="variable" value="shucked weight">
+                        <label for="">viscera weight</label>
+                        <input type="checkbox" name="variable" value="viscera weight">
+                        <label for="">shell weight</label>
+                        <input type="checkbox" name="variable" value="shell weight">
+                        <label for="">rings</label>
+                        <input type="checkbox" name="variable" value="rings">
+                    </div>
+                    <div class="subitems">
+                        <p>varaible de salida</p>
+                        <select name="variablesalida" id="">
+                            <option value="no">sin variable de salida</option>
+                            <option value="length">length</option>
+                            <option value="diameter">diameter</option>
+                            <option value="height">height</option>
+                            <option value="whole weight">whole weight</option>
+                            <option value="shucked weight">shucked weight</option>
+                            <option value="viscera weight">viscera weight</option>
+                            <option value="shell weight">shell weight</option>
+                            <option value="rings">rings</option>
+                        </select>
+                    </div>
+                    <div class="subitems">
+                        <p>tipo de regresion</p>
+                        <select name="regresion" id="">
+                            <option value="lineal">lineal</option>
+                            <option value="polinomica">polinomica</option>
+                        </select>
+                    </div>
+                    <div class="subitems">
+                        <!-- vamosssss aca -->
+                        <p>tamaño de entrenamiento</p>
+                        <input type="number" min="0" max="100" name="tamañoentrenamiento">
+                    </div>
+                    <div class="subitems">
+                        <input type="submit" value="generar">
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="item">
+            <div class="subitems">
+                <p>grafica</p>
+                <select name="" id="">
+                    <option value="">normalizacion</option>
+                    <option value="">diagrama de bigotes</option>
+                    <option value="">dispersion</option>
+                </select>
+            </div>
+            <div class="subitems">
+                <p>before</p>
+                <img src="{{data}}" alt="">
+            </div>
+            <div class="subitems">
+                <p>after</p>
+                <img src="" alt="">
+            </div>
+        </div>
+        <div class="item2">
+            <div class="subitems">
+                <p>r cuadrado</p>
+                <label for="">4</label>
+            </div>
+            <div class="subitems">
+                <p>rmse</p>
+                <label for="">0.3</label>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
