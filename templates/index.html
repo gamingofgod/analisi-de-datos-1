@@ -31,6 +31,10 @@
             background-color: red;
             width: 20%;
         }
+        .imagen{
+            width: 100%;
+            height: 100%;
+        }
     </style>
 </head>
 
@@ -96,6 +100,14 @@
                         <input type="number" min="0" max="100" name="tamañoentrenamiento">
                     </div>
                     <div class="subitems">
+                        <p>grafica</p>
+                        <select name="tipografica" id="">
+                            <option value="normalizacion">normalizacion</option>
+                            <option value="diagrama de bigotes">diagrama de bigotes</option>
+                            <option value="dispersion">dispersion</option>
+                        </select>
+                    </div>
+                    <div class="subitems">
                         <input type="submit" value="generar">
                     </div>
                 </div>
@@ -103,20 +115,12 @@
         </div>
         <div class="item">
             <div class="subitems">
-                <p>grafica</p>
-                <select name="" id="">
-                    <option value="">normalizacion</option>
-                    <option value="">diagrama de bigotes</option>
-                    <option value="">dispersion</option>
-                </select>
-            </div>
-            <div class="subitems">
                 <p>before</p>
-                <img src="" alt="">
+                <img class="imagen" src="{{datas[0]}}" alt="no se pudo encontrar">
             </div>
             <div class="subitems">
                 <p>after</p>
-                <img src="" alt="">
+                <img src="{{datas[1]}}" alt="">
             </div>
         </div>
         <div class="item2">
