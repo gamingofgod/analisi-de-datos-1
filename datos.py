@@ -161,7 +161,7 @@ def visualize():
                 fig = framehist(deleting(variableentrada[0], todelete(variableentrada[0], quantiles(variableentrada[0]), corregirfactoralfa(factoralfa))), variableentrada[0], datacsv)
             if(tipografica=="diagrama de bigotes"): 
                 fig = frameboxplot(deleting(variableentrada[0], todelete(variableentrada[0], quantiles(variableentrada[0]), corregirfactoralfa(factoralfa))), variableentrada[0], datacsv)
-
+                    #puede haber un problema al generar otra columna, revisar
     #con este return, solo le digo que renderice con las 2 imagenes cuales quiera
     #ya depende de cada metodo de los de arriba de las rutas de flask guardar las imagenes que son
     return render_template('index.html', datas=["../static/grafica2.png", "../static/grafica.png"])
