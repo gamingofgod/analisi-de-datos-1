@@ -17,6 +17,11 @@ import seaborn as sns
 from flask import Flask, render_template, request, send_file
 app = Flask(__name__)
 
+######  paquetes de analitica de datos
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import r2_score
+from sklearn.metrics import mean_squared_error
 
 # funciones del tratamiento de datos, toco ponerlas aca porque no las encontraba
 
@@ -64,17 +69,6 @@ def deleting(column, todelete):
     datacsv2 = datacsv.drop(datacsv.index[todelete])
     return datacsv2
 
-
-def plotframe(datacsvframe, column):
-
-    plot.hist(datacsvframe[column])
-    plot.subplots()
-    plot.boxplot(datacsvframe[column])
-    fig = plot.figure()
-    ax = fig.add_subplot(111)
-    res = stats.probplot(datacsvframe[column], dist=stats.norm, plot=ax)
-    plot.subplots()
-
 ##este metodo se encarga de mostrar el antes y despues de el historigrama
 #recibe el dataframe modificado (limpio), la columna a tratar y el dataframe original
 def framehist(datacsvframe, column, dataframeoriginal):
@@ -99,6 +93,52 @@ def frameboxplot(datacsvframe, column, dataframeoriginal):
     ubicacion2 = 'datos/static/grafica2.png'
     plot.savefig(ubicacion2)
 
+#ya funciona
+
+def frameprobplot(datacsvframe, column, dataframeoriginal):
+    fig = plot.figure()
+    ax = fig.add_subplot(111)
+    res = stats.probplot(datacsvframe[column], dist=stats.norm, plot=ax)
+    ubicacion = 'datos/static/grafica.png'
+    plot.savefig(ubicacion)
+    plot.subplots()
+    fig = plot.figure()
+    ax = fig.add_subplot(111)
+    res = stats.probplot(dataframeoriginal[column], dist=stats.norm, plot=ax)
+    ubicacion2 = 'datos/static/grafica2.png'
+    plot.savefig(ubicacion2)
+
+#funcion corazon para cuando la persona no quiera ver sin atipicos
+def corazon():
+    x = np.linspace(-1,1,1000)
+    y1 = np.sqrt(x * x) + np.sqrt(1 - x * x)
+    y2 = np.sqrt(x * x) - np.sqrt(1 - x * x)
+    plot.plot(x, y1, c='r', lw = 2)
+    plot.plot(x, y2, c='r', lw = 2)
+    ubicacion = 'datos/static/grafica.png'
+    plot.savefig(ubicacion)
+
+#funciones de comparacion de 2 o mas variables, toca ahcer una de 1 variable de entrada
+#y una de salida, y otro metoodo para n variables de entrada y una de salida
+#el codigo cambia ligeramente
+
+#por ahora solo la imagen
+
+def framescatter(datacsvframe, column,column2, dataframeoriginal):
+    plot.scatter(datacsvframe[column], datacsvframe[column2])
+    ubicacion = 'datos/static/grafica.png'
+    plot.savefig(ubicacion)
+    plot.subplots()
+    plot.scatter(dataframeoriginal[column], dataframeoriginal[column2])
+    ubicacion2 = 'datos/static/grafica2.png'
+    plot.savefig(ubicacion2)
+
+#funciones para el modelo
+#modelo de una entrada y una salida
+def modelounoauno():
+    return "hola"
+
+#funcion para que el alfa se asigne correctamente
 
 def corregirfactoralfa(factoralfa):
     if(factoralfa=="0"):
@@ -155,12 +195,19 @@ def visualize():
     # modelo para una sola entrada de variable, y una sola salida
     if (len(variableentrada) == 1 and variablesalida == "no"):
         if (atipicos == "activado"):
-            print(tipografica)
             if(tipografica=="dispersion"):
-                print("entro")
                 fig = framehist(deleting(variableentrada[0], todelete(variableentrada[0], quantiles(variableentrada[0]), corregirfactoralfa(factoralfa))), variableentrada[0], datacsv)
             if(tipografica=="diagrama de bigotes"): 
                 fig = frameboxplot(deleting(variableentrada[0], todelete(variableentrada[0], quantiles(variableentrada[0]), corregirfactoralfa(factoralfa))), variableentrada[0], datacsv)
+            if(tipografica=="normalizacion"):
+                fig = frameprobplot(deleting(variableentrada[0], todelete(variableentrada[0], quantiles(variableentrada[0]), corregirfactoralfa(factoralfa))), variableentrada[0], datacsv)
+        else:    
+            corazon()
+    if (len(variableentrada) == 1 and variablesalida != "no"):
+        if (atipicos == "activado"):
+            fig = framescatter(deleting(variableentrada[0], todelete(variableentrada[0], quantiles(variableentrada[0]), corregirfactoralfa(factoralfa))),variableentrada[0],variablesalida,datacsv)
+        else:
+            corazon()
 
     #con este return, solo le digo que renderice con las 2 imagenes cuales quiera
     #ya depende de cada metodo de los de arriba de las rutas de flask guardar las imagenes que son
