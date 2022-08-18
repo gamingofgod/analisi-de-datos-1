@@ -135,8 +135,27 @@ def framescatter(datacsvframe, column,column2, dataframeoriginal):
 
 #funciones para el modelo
 #modelo de una entrada y una salida
-def modelounoauno():
-    return "hola"
+def modelounoauno(variableentrada,variablesalida,tipoderegresion,tamañoentrenamiento,factoralfa):
+
+    X=deleting(variableentrada[0], todelete(variableentrada[0], quantiles(variableentrada[0]), corregirfactoralfa(factoralfa)))[variableentrada]
+    Y=deleting(variablesalida, todelete(variablesalida, quantiles(variablesalida), corregirfactoralfa(factoralfa)))[variablesalida]
+
+    X_train, X_test, y_train, y_test = train_test_split(
+                                        X,
+                                        Y,
+                                        train_size   = 0.5,
+                                    )
+    modelo = LinearRegression()
+    modelo.fit(X = np.array(X_train).reshape(-1, 1), y = y_train)
+            ##se debe retornar
+    datosobtenidos = modelo.predict(X = np.array(X_test).reshape(-1,1))
+    print(datosobtenidos)
+    rmse = mean_squared_error(y_true  = y_test, y_pred  = predicciones)
+    print(rmse)
+            #############
+    if(tipoderegresion == "polinomica"):
+        print("hola")
+    
 
 #funcion para que el alfa se asigne correctamente
 
@@ -150,6 +169,10 @@ def corregirfactoralfa(factoralfa):
         return 2.5
     if(factoralfa=="3"):
         return 3
+#funcion de correcion de tamañode entranamiento
+
+def corregirentrenamiento(tamañoentrenamiento):
+    return tamañoentrenamiento/100
     
 ##############################################################################
 # hoja de rutas
@@ -169,7 +192,6 @@ def visualize():
 
     # recuperamos el factor alfa
     factoralfa = request.form['factoralfa']
-    print(factoralfa)
     # devuelve numero entre 1 y 3, hay que corregirlo para que sea 1,5 a 3
 
     # variables de entrada, se recupera el primero seleccionado, se deberia recuperar la
@@ -208,7 +230,7 @@ def visualize():
             fig = framescatter(deleting(variableentrada[0], todelete(variableentrada[0], quantiles(variableentrada[0]), corregirfactoralfa(factoralfa))),variableentrada[0],variablesalida,datacsv)
         else:
             corazon()
-
+    modelounoauno(variableentrada,variablesalida,regresion,tamañoentrenamiento,corregirfactoralfa(factoralfa))
     #con este return, solo le digo que renderice con las 2 imagenes cuales quiera
     #ya depende de cada metodo de los de arriba de las rutas de flask guardar las imagenes que son
     return render_template('index.html', datas=["../static/grafica2.png", "../static/grafica.png"])
