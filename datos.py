@@ -56,10 +56,12 @@ def quantiles(column):
 
 def todelete(column, newlist, factoralfa):
     deleted = []
+    print("norrea")
+    print(factoralfa)
     for i in range(0, len(datacsv[column])):
-        if (datacsv[column][i] < newlist[0]-factoralfa*newlist[2]):
+        if (datacsv[column][i] < newlist[0]-int(factoralfa)*newlist[2]):
             deleted.append(i)
-        if (datacsv[column][i] > newlist[1] + factoralfa*newlist[2]):
+        if (datacsv[column][i] > newlist[1] + int(factoralfa)*newlist[2]):
             deleted.append(i)
 
     return deleted
@@ -133,42 +135,43 @@ def framescatter(datacsvframe, column,column2, dataframeoriginal):
     ubicacion2 = 'datos/static/grafica2.png'
     plot.savefig(ubicacion2)
 
-#funciones para el modelo
-#modelo de una entrada y una salida
-def modelounoauno(variableentrada,variablesalida,tipoderegresion,tamañoentrenamiento,factoralfa):
-
-    X=deleting(variableentrada[0], todelete(variableentrada[0], quantiles(variableentrada[0]), corregirfactoralfa(factoralfa)))[variableentrada]
-    Y=deleting(variablesalida, todelete(variablesalida, quantiles(variablesalida), corregirfactoralfa(factoralfa)))[variablesalida]
-
-    X_train, X_test, y_train, y_test = train_test_split(
-                                        X,
-                                        Y,
-                                        train_size   = 0.5,
-                                    )
-    modelo = LinearRegression()
-    modelo.fit(X = np.array(X_train).reshape(-1, 1), y = y_train)
-            ##se debe retornar
-    datosobtenidos = modelo.predict(X = np.array(X_test).reshape(-1,1))
-    print(datosobtenidos)
-    rmse = mean_squared_error(y_true  = y_test, y_pred  = predicciones)
-    print(rmse)
-            #############
-    if(tipoderegresion == "polinomica"):
-        print("hola")
-    
-
 #funcion para que el alfa se asigne correctamente
 
 def corregirfactoralfa(factoralfa):
     if(factoralfa=="0"):
         return 1.5
-        print("entro")
     if(factoralfa=="1"):
         return 2
     if(factoralfa=="2"):
         return 2.5
     if(factoralfa=="3"):
         return 3
+
+#funciones para el modelo
+#modelo de una entrada y una salida
+def modelounoauno(variableentrada,variablesalida,tipoderegresion,tamañoentrenamiento,factoralfa):
+
+    X=deleting(variableentrada[0], todelete(variableentrada[0], quantiles(variableentrada[0]), corregirfactoralfa(factoralfa)))[variableentrada[0]]
+    Y=deleting(variablesalida, todelete(variablesalida, quantiles(variablesalida), corregirfactoralfa(factoralfa)))[variablesalida]
+
+    X_train, X_test, Y_train, Y_test = train_test_split(
+                                        X,
+                                        Y,
+                                        train_size   = tamañoentrenamiento,
+                                    )
+    modelo = LinearRegression()
+    modelo.fit(X = np.array(X_train).reshape(-1, 1), y = Y_train)
+            ##se debe retornar
+    datosobtenidos = modelo.predict(X = np.array(X_test).reshape(-1,1))
+    print(datosobtenidos)
+    rmse = mean_squared_error(y_true  = Y_test, y_pred  = datosobtenidos)
+    print(rmse)
+            #############
+    if(tipoderegresion == "polinomica"):
+        print("hola")
+    
+
+
 #funcion de correcion de tamañode entranamiento
 
 def corregirentrenamiento(tamañoentrenamiento):
@@ -227,10 +230,11 @@ def visualize():
             corazon()
     if (len(variableentrada) == 1 and variablesalida != "no"):
         if (atipicos == "activado"):
+            modelounoauno(variableentrada,variablesalida,regresion,tamañoentrenamiento,corregirfactoralfa(factoralfa))
             fig = framescatter(deleting(variableentrada[0], todelete(variableentrada[0], quantiles(variableentrada[0]), corregirfactoralfa(factoralfa))),variableentrada[0],variablesalida,datacsv)
         else:
             corazon()
-    modelounoauno(variableentrada,variablesalida,regresion,tamañoentrenamiento,corregirfactoralfa(factoralfa))
+    
     #con este return, solo le digo que renderice con las 2 imagenes cuales quiera
     #ya depende de cada metodo de los de arriba de las rutas de flask guardar las imagenes que son
     return render_template('index.html', datas=["../static/grafica2.png", "../static/grafica.png"])
