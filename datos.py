@@ -137,8 +137,6 @@ def corazon():
 #el codigo cambia ligeramente
 #por ahora solo la imagen
 def framescatter(datacsvframeA,datacsvframeB, column,column2, dataframeoriginal):
-    print(len(datacsvframeA))
-    print(len(datacsvframeB))
     plot.scatter(list(datacsvframeA),list(datacsvframeB))
     ubicacion = 'datos/static/grafica.png'
     plot.savefig(ubicacion)
@@ -149,9 +147,9 @@ def framescatter(datacsvframeA,datacsvframeB, column,column2, dataframeoriginal)
 
 #pal modelo
 def framescattermodel(modelogeneradolimpio, modelogeneradosucio, variablelimpia, variablesucia):
-    print("aca maricaaaaaaaaaa el variable limpio")
+    print("aca maricaaaaaaaaaa el variable sucia")
     print(variablesucia)
-    print("aca maricaaaaaaaaaa el modelo limpio")
+    print("aca maricaaaaaaaaaa el modelo sucia")
     print(modelogeneradosucio)
     plot.scatter(modelogeneradolimpio, variablelimpia)
     ubicacion = 'datos/static/grafica.png'
@@ -190,8 +188,8 @@ def modelounoauno(tamañoentrenamiento,X,Y):
     modelo = LinearRegression()
     modelo.fit(X = np.array(X_train).reshape(-1, 1), y = Y_train)
     datosobtenidos = modelo.predict(X = np.array(X_test).reshape(-1,1))
-    # rmse = mean_squared_error(y_true  = Y_test, y_pred  = datosobtenidos)
-    # print(rmse)
+    rmse = mean_squared_error(y_true  = Y_test, y_pred  = datosobtenidos)
+    print(rmse)
     return datosobtenidos
     
 

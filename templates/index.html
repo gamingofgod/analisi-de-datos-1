@@ -39,6 +39,7 @@
 </head>
 
 <body>
+    <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
     <div class="contenedor">
         <div class="item colordiferente">
             <form action="/visualize" method="post">
@@ -141,6 +142,31 @@
             </div>
         </div>
     </div>
+    <script>
+        $(".checks").on("click", function(){
+            if($( ".checks:checked").length > 2){
+                $('#btn').prop('disabled', true);
+
+            }
+
+            else {
+                
+                $('#btn').prop('disabled', false);
+                $('#atipi').prop('disabled', false);
+                $('#atipi2').prop('disabled', false);
+                $('#FactorAlfa').prop('disabled', false);
+                $('#taman').prop('disabled', false);
+                $('#mode1').prop('disabled', false);
+                $('#model2').prop('disabled', false);
+                $('#drop1').prop('disabled', false);
+                $('#drop2').prop('disabled', false);
+                $('#drop3').prop('disabled', false);
+                
+            }
+        }
+        
+        );
+    </script>
 </body>
 
 </html>
