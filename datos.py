@@ -24,12 +24,13 @@ from sklearn.metrics import r2_score
 from sklearn.metrics import mean_squared_error
 
 # funciones del tratamiento de datos, toco ponerlas aca porque no las encontraba
-
+#decimos ubicacion del csv
 file = "datos/abalone.csv"
 
+#leemos el fichero
 datacsv = pd.read_csv(file)
 
-
+#establecemos las columnas
 column = ['sex',
           'length',
           'diameter',
@@ -41,7 +42,7 @@ column = ['sex',
           'rings']
 datacsv.columns = column
 
-
+#esta funcion, recibe la columna y saca los qr1 qr3 y iqr
 def quantiles(column):
     newlist = []
     qr1 = (datacsv[column].quantile(q=0.25))
@@ -53,20 +54,31 @@ def quantiles(column):
     newlist.append(iqr)
     return newlist
 
-
+#genera la lista de indices que se deben eliminar de una columna, recibe la lista anteriorir de qr's
 def todelete(column, newlist, factoralfa):
     deleted = []
-    print("norrea")
-    print(factoralfa)
     for i in range(0, len(datacsv[column])):
         if (datacsv[column][i] < newlist[0]-int(factoralfa)*newlist[2]):
             deleted.append(i)
         if (datacsv[column][i] > newlist[1] + int(factoralfa)*newlist[2]):
             deleted.append(i)
-
     return deleted
 
+#necesito para generar el modelo con el mismo len en cada columna
+#entonces lo que hago es obtener la lista de todos los atipicos, sumados todas las listas
+#idividuales de cada columna
+#recibe el factor alfa (1.5 a 3) y la lista de columnas
+def todeletemodel(listaColumnas, factoralfa):
+    deletedtotal=[]
+    listasumada=[]
+    for i in range(len(listaColumnas)):
+        newlist=quantiles(listaColumnas[i])
+        listasumada = todelete(listaColumnas[i], newlist, factoralfa) + listasumada
+    deletedtotal = set(listasumada)
+    deletedtotal=list(deletedtotal)
+    return deletedtotal
 
+#elimina los indices, recibe la columna y la lista a eliminar
 def deleting(column, todelete):
     datacsv2 = datacsv.drop(datacsv.index[todelete])
     return datacsv2
@@ -81,11 +93,11 @@ def framehist(datacsvframe, column, dataframeoriginal):
     figura = plot.hist(dataframeoriginal[column])
     ubicacion2 = 'datos/static/grafica2.png'
     plot.savefig(ubicacion2)
-
 #retorna 2 ubicaciones genericas, de hecho, todo retorna dos ubicaciones que se renderizan
 #en el html, la diferencia es que cada metodo incluye dibujar la grafica y guardarla
 #de acuerdo al metodo se guardaran las 2 imagenes y ya
 
+##este metodo se encarga de generar el antes y despues de el diagrama de bigotes
 def frameboxplot(datacsvframe, column, dataframeoriginal):
     figura = plot.boxplot(datacsvframe[column])
     ubicacion = 'datos/static/grafica.png'
@@ -95,8 +107,7 @@ def frameboxplot(datacsvframe, column, dataframeoriginal):
     ubicacion2 = 'datos/static/grafica2.png'
     plot.savefig(ubicacion2)
 
-#ya funciona
-
+##este metodo se encarga de generar el antes y despues de el diagrama de normalizacion
 def frameprobplot(datacsvframe, column, dataframeoriginal):
     fig = plot.figure()
     ax = fig.add_subplot(111)
@@ -110,8 +121,9 @@ def frameprobplot(datacsvframe, column, dataframeoriginal):
     ubicacion2 = 'datos/static/grafica2.png'
     plot.savefig(ubicacion2)
 
-#funcion corazon para cuando la persona no quiera ver sin atipicos
+#funcion corazon para cuando la persona no quiera ver atipicos
 def corazon():
+    plot.subplots()
     x = np.linspace(-1,1,1000)
     y1 = np.sqrt(x * x) + np.sqrt(1 - x * x)
     y2 = np.sqrt(x * x) - np.sqrt(1 - x * x)
@@ -123,11 +135,11 @@ def corazon():
 #funciones de comparacion de 2 o mas variables, toca ahcer una de 1 variable de entrada
 #y una de salida, y otro metoodo para n variables de entrada y una de salida
 #el codigo cambia ligeramente
-
 #por ahora solo la imagen
-
-def framescatter(datacsvframe, column,column2, dataframeoriginal):
-    plot.scatter(datacsvframe[column], datacsvframe[column2])
+def framescatter(datacsvframeA,datacsvframeB, column,column2, dataframeoriginal):
+    print(len(datacsvframeA))
+    print(len(datacsvframeB))
+    plot.scatter(list(datacsvframeA),list(datacsvframeB))
     ubicacion = 'datos/static/grafica.png'
     plot.savefig(ubicacion)
     plot.subplots()
@@ -135,8 +147,17 @@ def framescatter(datacsvframe, column,column2, dataframeoriginal):
     ubicacion2 = 'datos/static/grafica2.png'
     plot.savefig(ubicacion2)
 
-#funcion para que el alfa se asigne correctamente
+#pal modelo
+def framescattermodel(modelogeneradolimpio, modelogeneradosucio, variablelimpia, variablesucia):
+    plot.scatter(modelogeneradolimpio, variablelimpia)
+    ubicacion = 'datos/static/grafica.png'
+    plot.savefig(ubicacion)
+    plot.subplots()
+    plot.scatter(modelogeneradosucio, variablesucia)
+    ubicacion2 = 'datos/static/grafica2.png'
+    plot.savefig(ubicacion2)
 
+#funcion para que el alfa se asigne correctamente
 def corregirfactoralfa(factoralfa):
     if(factoralfa=="0"):
         return 1.5
@@ -148,38 +169,28 @@ def corregirfactoralfa(factoralfa):
         return 3
 
 #funciones para el modelo
-#modelo de una entrada y una salida
-def modelounoauno(variableentrada,variablesalida,tipoderegresion,tamañoentrenamiento,factoralfa):
-
-    X=deleting(variableentrada[0], todelete(variableentrada[0], quantiles(variableentrada[0]), corregirfactoralfa(factoralfa)))[variableentrada[0]]
-    Y=deleting(variablesalida, todelete(variablesalida, quantiles(variablesalida), corregirfactoralfa(factoralfa)))[variablesalida]
-
+#modelo de una entrada y una salida, con regresion lineal (porque no hemos visto mas)
+def modelounoauno(tamañoentrenamiento,X,Y):
     X_train, X_test, Y_train, Y_test = train_test_split(
                                         X,
                                         Y,
-                                        train_size   = tamañoentrenamiento,
+                                        train_size   = corregirentrenamiento(tamañoentrenamiento),
                                     )
     modelo = LinearRegression()
     modelo.fit(X = np.array(X_train).reshape(-1, 1), y = Y_train)
-            ##se debe retornar
     datosobtenidos = modelo.predict(X = np.array(X_test).reshape(-1,1))
-    print(datosobtenidos)
-    rmse = mean_squared_error(y_true  = Y_test, y_pred  = datosobtenidos)
-    print(rmse)
-            #############
-    if(tipoderegresion == "polinomica"):
-        print("hola")
+    # rmse = mean_squared_error(y_true  = Y_test, y_pred  = datosobtenidos)
+    # print(rmse)
+    return datosobtenidos
     
 
 
 #funcion de correcion de tamañode entranamiento
-
 def corregirentrenamiento(tamañoentrenamiento):
     return tamañoentrenamiento/100
     
 ##############################################################################
-# hoja de rutas
-
+# hoja de rutas de flask
 
 @app.route('/')
 def index():
@@ -206,6 +217,10 @@ def visualize():
     variablesalida = request.form.get('variablesalida')
     # devuelve el texto
 
+    #esto recupera que quiere la persona, modelo o scatter directamente
+    modelo = request.form['modelo']
+    #retorna si, no
+
     # regresion, se hace igual que arriba
     regresion = request.form.get('regresion')
     # devuelve el texto
@@ -217,24 +232,38 @@ def visualize():
     #seleccionar grafica
     tipografica = request.form.get('tipografica')
 
-    # modelo para una sola entrada de variable, y una sola salida
+    # este if determina si solo hay una variable de entrada y no hay variables de salida
+    #en caso de solo haberla, genera ambas imagenes, y solo en caso
+    #de tener desactivado los atipicos sobreescribiria la segunda iamgen por un corazon
     if (len(variableentrada) == 1 and variablesalida == "no"):
-        if (atipicos == "activado"):
-            if(tipografica=="dispersion"):
-                fig = framehist(deleting(variableentrada[0], todelete(variableentrada[0], quantiles(variableentrada[0]), corregirfactoralfa(factoralfa))), variableentrada[0], datacsv)
-            if(tipografica=="diagrama de bigotes"): 
-                fig = frameboxplot(deleting(variableentrada[0], todelete(variableentrada[0], quantiles(variableentrada[0]), corregirfactoralfa(factoralfa))), variableentrada[0], datacsv)
-            if(tipografica=="normalizacion"):
-                fig = frameprobplot(deleting(variableentrada[0], todelete(variableentrada[0], quantiles(variableentrada[0]), corregirfactoralfa(factoralfa))), variableentrada[0], datacsv)
-        else:    
+        if(tipografica=="dispersion"):
+            fig = framehist(deleting(variableentrada[0], todelete(variableentrada[0], quantiles(variableentrada[0]), corregirfactoralfa(factoralfa))), variableentrada[0], datacsv)
+        if(tipografica=="diagrama de bigotes"): 
+            fig = frameboxplot(deleting(variableentrada[0], todelete(variableentrada[0], quantiles(variableentrada[0]), corregirfactoralfa(factoralfa))), variableentrada[0], datacsv)
+        if(tipografica=="normalizacion"):
+            fig = frameprobplot(deleting(variableentrada[0], todelete(variableentrada[0], quantiles(variableentrada[0]), corregirfactoralfa(factoralfa))), variableentrada[0], datacsv)
+        if (atipicos == "desactivado"):
             corazon()
+
+    #este if revisa si hay una variable de entrada y una de salida, se genera la imagen de relacion y el modelo
     if (len(variableentrada) == 1 and variablesalida != "no"):
-        if (atipicos == "activado"):
-            modelounoauno(variableentrada,variablesalida,regresion,tamañoentrenamiento,corregirfactoralfa(factoralfa))
-            fig = framescatter(deleting(variableentrada[0], todelete(variableentrada[0], quantiles(variableentrada[0]), corregirfactoralfa(factoralfa))),variableentrada[0],variablesalida,datacsv)
-        else:
-            corazon()
-    
+        if(modelo=="si"):
+            if (atipicos == "activado"):
+                muchasJuntas=variableentrada
+                muchasJuntas.append(variablesalida)
+                modelogeneradolimpio = modelounoauno(int(tamañoentrenamiento),deleting(variableentrada[0], todeletemodel(muchasJuntas, corregirfactoralfa(factoralfa)))[variableentrada[0]],deleting(variablesalida, todeletemodel(muchasJuntas, corregirfactoralfa(factoralfa)))[variablesalida])
+                print(modelogeneradolimpio)
+                modelogeneradosucio =modelounoauno(int(tamañoentrenamiento),datacsv[variableentrada[0]],datacsv[variablesalida])
+                print(modelogeneradosucio)
+                framescatter(modelogeneradolimpio,modelogeneradosucio,deleting(variableentrada[0], todelete(variableentrada[0], quantiles(variableentrada[0]), corregirfactoralfa(factoralfa))),datacsv[variableentrada[0]])
+            else:
+                corazon()
+        if(modelo=="no"):
+            muchasJuntas=variableentrada
+            muchasJuntas.append(variablesalida)
+            framescatter(deleting(variableentrada[0],todeletemodel(muchasJuntas, corregirfactoralfa(factoralfa)))[variableentrada[0]],deleting(variablesalida, todeletemodel(muchasJuntas, corregirfactoralfa(factoralfa)))[variablesalida],variableentrada[0],variablesalida,datacsv)
+            if (atipicos == "desactivado"):
+                corazon()
     #con este return, solo le digo que renderice con las 2 imagenes cuales quiera
     #ya depende de cada metodo de los de arriba de las rutas de flask guardar las imagenes que son
     return render_template('index.html', datas=["../static/grafica2.png", "../static/grafica.png"])
