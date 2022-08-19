@@ -149,6 +149,10 @@ def framescatter(datacsvframeA,datacsvframeB, column,column2, dataframeoriginal)
 
 #pal modelo
 def framescattermodel(modelogeneradolimpio, modelogeneradosucio, variablelimpia, variablesucia):
+    print("aca maricaaaaaaaaaa el variable limpio")
+    print(variablesucia)
+    print("aca maricaaaaaaaaaa el modelo limpio")
+    print(modelogeneradosucio)
     plot.scatter(modelogeneradolimpio, variablelimpia)
     ubicacion = 'datos/static/grafica.png'
     plot.savefig(ubicacion)
@@ -167,6 +171,13 @@ def corregirfactoralfa(factoralfa):
         return 2.5
     if(factoralfa=="3"):
         return 3
+
+#aca lo que aho es que como el modelo tiene menos cantidad de elementos, para poder
+#producir la imagen necesitamos capar la cantidad elementos en el modelo limpio
+def construirnuevalimpia(modelo,alimpiar):
+    lenmodelo=len(modelo)
+    alimpiar=alimpiar[0:lenmodelo]
+    return alimpiar
 
 #funciones para el modelo
 #modelo de una entrada y una salida, con regresion lineal (porque no hemos visto mas)
@@ -252,10 +263,12 @@ def visualize():
                 muchasJuntas=variableentrada
                 muchasJuntas.append(variablesalida)
                 modelogeneradolimpio = modelounoauno(int(tamañoentrenamiento),deleting(variableentrada[0], todeletemodel(muchasJuntas, corregirfactoralfa(factoralfa)))[variableentrada[0]],deleting(variablesalida, todeletemodel(muchasJuntas, corregirfactoralfa(factoralfa)))[variablesalida])
-                print(modelogeneradolimpio)
-                modelogeneradosucio =modelounoauno(int(tamañoentrenamiento),datacsv[variableentrada[0]],datacsv[variablesalida])
-                print(modelogeneradosucio)
-                framescatter(modelogeneradolimpio,modelogeneradosucio,deleting(variableentrada[0], todelete(variableentrada[0], quantiles(variableentrada[0]), corregirfactoralfa(factoralfa))),datacsv[variableentrada[0]])
+                modelogeneradosucio = modelounoauno(int(tamañoentrenamiento),datacsv[variableentrada[0]],datacsv[variablesalida])
+                var = deleting(variablesalida, todeletemodel(muchasJuntas, corregirfactoralfa(factoralfa)))[variablesalida]
+                meter=construirnuevalimpia(modelogeneradolimpio,var)
+                var2 = datacsv[variablesalida]
+                meter2=construirnuevalimpia(modelogeneradosucio,var2)
+                framescattermodel(list(modelogeneradolimpio),modelogeneradosucio,list(meter),meter2)
             else:
                 corazon()
         if(modelo=="no"):
