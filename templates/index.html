@@ -88,18 +88,11 @@
                             <option value="rings">rings</option>
                         </select>
                     </div>
-                    <div class="subitems">
-                        <p>modelo o scatter</p>
-                        <label for="">Modelo</label>
-                        <input type="radio" name="modelo" value="si" required >
-                        <label for="">Scatter</label>
-                        <input type="radio" name="modelo" value="no" required>
-                    </div>
-                    <div class="subitems">
-                        <p>tipo de regresion</p>
-                        <select name="regresion" id="">
-                            <option value="lineal">lineal</option>
-                            <option value="polinomica">polinomica</option>
+                    <div class="subitem">
+                        <p>modelo o scatter? (para dos variables)</p>
+                        <select name="modelo2" id="">
+                            <option value="no">scatter</option>
+                            <option value="si">modelo</option>
                         </select>
                     </div>
                     <div class="subitems">
@@ -133,12 +126,8 @@
         </div>
         <div class="item2">
             <div class="subitems">
-                <p>r cuadrado</p>
-                <label for="">4</label>
-            </div>
-            <div class="subitems">
-                <p>rmse</p>
-                <label for="">0.3</label>
+                <h1>rmse</h1>
+                <h2>{{datas[2]}}</h2>
             </div>
         </div>
     </div>
