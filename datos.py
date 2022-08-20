@@ -261,6 +261,7 @@ def visualize():
     # este if determina si solo hay una variable de entrada y no hay variables de salida
     #en caso de solo haberla, genera ambas imagenes, y solo en caso
     #de tener desactivado los atipicos sobreescribiria la segunda iamgen por un corazon
+
     if (len(variableentrada) == 1 and variablesalida == "no"):
         if(tipografica=="dispersion"):
             fig = framehist(deleting(variableentrada[0], todelete(variableentrada[0], quantiles(variableentrada[0]), corregirfactoralfa(factoralfa))), variableentrada[0], datacsv)
@@ -314,8 +315,9 @@ def visualize():
             else:
                 modelogeneradosucio = modelogeneradosucio[0:len(datacsv[variablesalida])]
             framescattermodel(modelogeneradolimpio,modelogeneradosucio,variablelimpia,listakk)
-        else:
+        if (atipicos == "desactivado" and variablesalida !="no" and len(variablesalida)>1):
             corazon()
+            
     #con este return, solo le digo que renderice con las 2 imagenes cuales quiera
     #ya depende de cada metodo de los de arriba de las rutas de flask guardar las imagenes que son
     return render_template('index.html', datas=["../static/grafica2.png", "../static/grafica.png",rmse])
