@@ -8,27 +8,22 @@
     <title>Document</title>
     <style>
         :root {}
-
         body {
             margin: 0;
         }
-
         .contenedor {
             display: flex;
             height: 100vh;
         }
-
         .item {
             background-color: aquamarine;
             width: 40%;
         }
-
         .colordiferente {
-            background-color: bisque;
+            background-color: rgb(248, 226, 198);
         }
-
         .item2 {
-            background-color: red;
+            background-color: rgb(228, 13, 13);
             width: 20%;
         }
         .imagen{
@@ -37,7 +32,6 @@
         }
     </style>
 </head>
-
 <body>
     <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
     <div class="contenedor">
@@ -135,11 +129,8 @@
         $(".checks").on("click", function(){
             if($( ".checks:checked").length > 2){
                 $('#btn').prop('disabled', true);
-
             }
-
             else {
-                
                 $('#btn').prop('disabled', false);
                 $('#atipi').prop('disabled', false);
                 $('#atipi2').prop('disabled', false);
@@ -149,11 +140,9 @@
                 $('#model2').prop('disabled', false);
                 $('#drop1').prop('disabled', false);
                 $('#drop2').prop('disabled', false);
-                $('#drop3').prop('disabled', false);
-                
+                $('#drop3').prop('disabled', false);   
             }
         }
-        
         );
     </script>
 </body>
