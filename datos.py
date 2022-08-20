@@ -275,18 +275,17 @@ def visualize():
     #este if revisa si hay una variable de entrada y una de salida, se genera la imagen de relacion y el modelo
     if (len(variableentrada) == 1 and variablesalida != "no"):
         if(modelo=="si"):
-            if (atipicos == "activado"):
-                #este bloque, esta raro, creo que a eso se debe la imagen, hay que revisarlo
-                muchasJuntas=variableentrada
-                muchasJuntas.append(variablesalida)
-                modelogeneradolimpio = modelounoauno(int(tamañoentrenamiento),deleting(variableentrada[0], todeletemodel(muchasJuntas, corregirfactoralfa(factoralfa)))[variableentrada[0]],deleting(variablesalida, todeletemodel(muchasJuntas, corregirfactoralfa(factoralfa)))[variablesalida])
-                modelogeneradosucio = modelounoauno(int(tamañoentrenamiento),datacsv[variableentrada[0]],datacsv[variablesalida])
-                var = deleting(variablesalida, todeletemodel(muchasJuntas, corregirfactoralfa(factoralfa)))[variablesalida]
-                meter=construirnuevalimpia(modelogeneradolimpio,var)
-                var2 = datacsv[variablesalida]
-                meter2=construirnuevalimpia(modelogeneradosucio,var2)
-                framescattermodel(list(modelogeneradolimpio),modelogeneradosucio,list(meter),meter2)
-            else:
+            #este bloque, esta raro, creo que a eso se debe la imagen, hay que revisarlo
+            muchasJuntas=variableentrada
+            muchasJuntas.append(variablesalida)
+            modelogeneradolimpio = modelounoauno(int(tamañoentrenamiento),deleting(variableentrada[0], todeletemodel(muchasJuntas, corregirfactoralfa(factoralfa)))[variableentrada[0]],deleting(variablesalida, todeletemodel(muchasJuntas, corregirfactoralfa(factoralfa)))[variablesalida])
+            modelogeneradosucio = modelounoauno(int(tamañoentrenamiento),datacsv[variableentrada[0]],datacsv[variablesalida])
+            var = deleting(variablesalida, todeletemodel(muchasJuntas, corregirfactoralfa(factoralfa)))[variablesalida]
+            meter=construirnuevalimpia(modelogeneradolimpio,var)
+            var2 = datacsv[variablesalida]
+            meter2=construirnuevalimpia(modelogeneradosucio,var2)
+            framescattermodel(list(modelogeneradolimpio),modelogeneradosucio,list(meter),meter2)
+            if (atipicos == "desactivado"):
                 corazon()
         if(modelo=="no"):
             muchasJuntas=variableentrada
@@ -294,28 +293,27 @@ def visualize():
             framescatter(deleting(variableentrada[0],todeletemodel(muchasJuntas, corregirfactoralfa(factoralfa)))[variableentrada[0]],deleting(variablesalida, todeletemodel(muchasJuntas, corregirfactoralfa(factoralfa)))[variablesalida],variableentrada[0],variablesalida,datacsv)
             if (atipicos == "desactivado"):
                 corazon()
-    else:
-        if (atipicos == "activado" and variablesalida !="no"):
-            #x es datafream
-            #y es una columna
-            variableentrada.append(variablesalida)
-            filasaeliminar=todeletemodel(variableentrada,factoralfa)
-            resultadoDF=deleting("ola",filasaeliminar)
-            modelogeneradolimpio =modelounoamuchos(corregirentrenamiento(int(tamañoentrenamiento)),resultadoDF,deleting("ola",todelete(variablesalida,quantiles(variablesalida),corregirfactoralfa(factoralfa)))[variablesalida])
-            modelogeneradosucio =modelounoamuchos(corregirentrenamiento(int(tamañoentrenamiento)),datacsv,datacsv[variablesalida])
-            variablelimpia=deleting("ola",todelete(variablesalida,quantiles(variablesalida),corregirfactoralfa(factoralfa)))[variablesalida]
-            if(len(modelogeneradolimpio)>len(variablelimpia)):
-                modelogeneradolimpio = modelogeneradolimpio[0:len(variablelimpia)]
-            else:
-                variablelimpia = variablelimpia[0:len(modelogeneradolimpio)]
+    if(len(variableentrada)> 1 and variablesalida != "no" and modelo == "si"):
+        #x es datafream
+        #y es una columna
+        variableentrada.append(variablesalida)
+        filasaeliminar=todeletemodel(variableentrada,factoralfa)
+        resultadoDF=deleting("ola",filasaeliminar)
+        modelogeneradolimpio =modelounoamuchos(corregirentrenamiento(int(tamañoentrenamiento)),resultadoDF,deleting("ola",todelete(variablesalida,quantiles(variablesalida),corregirfactoralfa(factoralfa)))[variablesalida])
+        modelogeneradosucio =modelounoamuchos(corregirentrenamiento(int(tamañoentrenamiento)),datacsv,datacsv[variablesalida])
+        variablelimpia=deleting("ola",todelete(variablesalida,quantiles(variablesalida),corregirfactoralfa(factoralfa)))[variablesalida]
+        if(len(modelogeneradolimpio)>len(variablelimpia)):
+            modelogeneradolimpio = modelogeneradolimpio[0:len(variablelimpia)]
+        else:
+            variablelimpia = variablelimpia[0:len(modelogeneradolimpio)]
+        listakk = list(datacsv[variablesalida])
+        if(len(datacsv[variablesalida])>len(modelogeneradosucio)):
             listakk = list(datacsv[variablesalida])
-            if(len(datacsv[variablesalida])>len(modelogeneradosucio)):
-                listakk = list(datacsv[variablesalida])
-                listakk=listakk[0:len(modelogeneradosucio)]
-            else:
-                modelogeneradosucio = modelogeneradosucio[0:len(datacsv[variablesalida])]
-            framescattermodel(modelogeneradolimpio,modelogeneradosucio,variablelimpia,listakk)
-        if (atipicos == "desactivado" and variablesalida !="no" and len(variablesalida)>1):
+            listakk=listakk[0:len(modelogeneradosucio)]
+        else:
+            modelogeneradosucio = modelogeneradosucio[0:len(datacsv[variablesalida])]
+        framescattermodel(modelogeneradolimpio,modelogeneradosucio,variablelimpia,listakk)
+        if (atipicos == "desactivado"):
             corazon()
             
     #con este return, solo le digo que renderice con las 2 imagenes cuales quiera
